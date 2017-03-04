@@ -1,4 +1,4 @@
-#include "Decode.h"
+#include "decode.h"
 
 class YDecode :public Decode
 {

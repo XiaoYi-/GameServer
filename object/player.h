@@ -1,8 +1,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "Object.h"
-#include "../Session/Session.h"
+#include "object.h"
+#include "../session/session.h"
 #include <Python.h>
 
 class Session;

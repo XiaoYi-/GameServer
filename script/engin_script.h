@@ -2,7 +2,7 @@
 #define ENGINSCRIPT_H
 
 #include <Python.h>
-#include "script_oj.h"
+#include "script_obj.h"
 
 //class ScriptObj;
 

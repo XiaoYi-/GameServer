@@ -6,7 +6,7 @@
 #include "../packet/packet.h"
 #include "../thread/listen_thread.h"
 #include "../thread/event_thread.h"
-#include "../script/script_oj.h"
+#include "../script/script_obj.h"
 #include "../script/engin_script.h"
 #include "../thread/mutex.h"
 
