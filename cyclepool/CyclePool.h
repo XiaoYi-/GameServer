@@ -1,7 +1,7 @@
 #ifndef CYCLE_POOL_H
 #define CYCLE_POOL_H
 
-#include "../Thread/mutex.h"
+#include "../thread/mutex.h"
 #include <vector>
 //#include <pthread.h>
 

@@ -4,7 +4,7 @@
 #define MAX_PACKET_LEN 2048
 #include "../Server/server.h"
 #include "../Packet/Packet.h"
-//#include "../Thread/EventThread.h"
+//#include "../thread/EventThread.h"
 #include <event2/bufferevent.h>
 #include <event2/buffer.h>
 

@@ -4,11 +4,11 @@
 #include "../Object/Player.h"
 #include "../Object/ObjectHolder.h"
 #include "../Packet/Packet.h"
-#include "../Thread/listenThread.h"
-#include "../Thread/EventThread.h"
+#include "../thread/listenThread.h"
+#include "../thread/EventThread.h"
 #include "../EnginScript/ScriptObj.h"
 #include "../EnginScript/EnginScript.h"
-#include "../Thread/mutex.h"
+#include "../thread/mutex.h"
 
 #include <pthread.h>
 #include <Python.h>
