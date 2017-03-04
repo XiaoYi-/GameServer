@@ -9,8 +9,8 @@
 #include <fcntl.h>
 #include <sys/shm.h>
 
-#include "Packet/Packet.h"
-#include "clientObj/connectObj.h"
+#include "packet/packet.h"
+#include "client_obj/connect_obj.h"
 
 #include <event2/bufferevent.h>
 #include <event2/buffer.h>

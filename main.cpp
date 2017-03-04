@@ -1,6 +1,6 @@
 
-#include "./thread/listenThread.h"
-#include "./Packet/Packet.h"
+#include "./thread/listen_thread.h"
+#include "./packet/packet.h"
 
 int main(int argc,char** argv){
 
