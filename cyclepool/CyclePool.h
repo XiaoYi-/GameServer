@@ -29,6 +29,7 @@ private:
 	//pthread_mutex_t mItemBackMutexLock;
 	Mutex _frontMutex;
 	Mutex _backMutex;
+	
 };
 
 
