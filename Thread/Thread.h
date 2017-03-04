@@ -14,7 +14,6 @@ public:
 };
 
 static void* Proc(void* t){
-	//printf("------Proc------\n");
 	Thread* thread = (Thread*)(t);
 	thread->Run();
 }

@@ -29,7 +29,7 @@ Session* DispatchThread::GetSession(char* sIp,int iPort){
 }
 
 static void buff_readcb(struct bufferevent *b, void *arg){
-	printf("%s\n", "----------readcb-----------------");
+	//printf("%s\n", "----------readcb-----------------");
 	Session* session = (Session*)(arg);
 	EventThread* evThread = session->mGameServer->GetEventThread();
 	evThread->OnBuffRead(b,session);
@@ -44,7 +44,7 @@ static void buff_writecb(struct bufferevent *b, void *arg){
 void DispatchThread::Connection_notify(const EventThread* evThread,struct evconnlistener *listener, evutil_socket_t fd,struct sockaddr *sa){
 	// create buffevent and session
 	// call back is eventthread me
-	printf("%s\n","------create connect-----");
+	//printf("%s\n","------create connect-----");
 	GameServer* server = this->mGameServer;
 	struct bufferevent * buffev;
 	struct event_base *base =  server->GetEventThread()->mevbase;
@@ -73,9 +73,8 @@ void DispatchThread::Connection_notify(const EventThread* evThread,struct evconn
 
 void DispatchThread::Run(){
 	while(true){
-		printf("%s %d\n", "bbb",this->mPort);
+		//printf("%s %d\n", "bbb",this->mPort);
 		event_base_dispatch(this->mevbase);
-		printf("%s %d\n", "aaa",this->mPort);
 		//break;
 	}
 	//pthread_exit(0);

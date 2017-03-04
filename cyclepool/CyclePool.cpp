@@ -7,17 +7,17 @@ CyclePool::CyclePool(int iMaxCount,int iMaxSize):mMaxItemCount(iMaxCount),mMaxIt
 
 CyclePool::~CyclePool(){
 	std::vector<ItemBuff*>::iterator iter = this->mItemBuffFront.begin();
-	for(iter;iter!=this->mItemBuffFront.end();iter++){
+	for(iter;iter!=this->mItemBuffFront.end();){
 		free(*iter->buff);
 		free(*iter);
-		this->mItemBuffFront.erase(iter)
+		iter = this->mItemBuffFront.erase(iter)
 	}
 
 	std::vector<ItemBuff*>::iterator iter = this->mItemBuffBack.begin();
-	for(iter;iter!=this->mItemBuffBack.end();iter++){
+	for(iter;iter!=this->mItemBuffBack.end();){
 		free(*iter->buff);
 		free(*iter);
-		this->mItemBuffBack.erase(iter)
+		iter = this->mItemBuffBack.erase(iter)
 	}
 
 	pthread_mutex_free(mItemFrontMutexLock);

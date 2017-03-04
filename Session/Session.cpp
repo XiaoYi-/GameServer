@@ -39,7 +39,7 @@ bool Session::Decode(int& iType,int& iStartPos,int& iLen){
 		}
 		iTemp = Packet::ReadInt(this->mStreamBuff+iPos+iLen);
 		//memcpy(&iTemp,this->mStreamBuff+iStartPos+iLen,sizeof(int));
-		printf("iEndFlat %d\n", iTemp);
+		//printf("iEndFlat %d\n", iTemp);
 		if (iTemp != iEndFlat){
 			printf("%s\n", "iTemp != iEndFlat");
 			return false;
