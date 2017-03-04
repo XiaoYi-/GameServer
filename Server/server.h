@@ -4,7 +4,7 @@
 #include "../Object/Player.h"
 #include "../Object/ObjectHolder.h"
 #include "../Packet/Packet.h"
-#include "../Thread/DispatchThread.h"
+#include "../Thread/listenThread.h"
 #include "../Thread/EventThread.h"
 #include "../EnginScript/ScriptObj.h"
 #include "../EnginScript/EnginScript.h"
@@ -19,7 +19,7 @@
 
 class Packet;
 class EventThread;
-class GameServer;
+class Server;
 class Player;
 
 //static EventThread* gEventThread = NULL;
@@ -28,10 +28,10 @@ static Packet* gCurrSendPacket=NULL;
 
 static std::map<int,Session*> gMapSession;
 
-class GameServer:public ScriptObj{ //
+class Server:public ScriptObj{ //
 public:
-	GameServer();
-	~GameServer();
+	Server();
+	~Server();
 	void OnRecievePacket(Packet* p);
 	Packet* GetNextPacket();
 	//bool InitNet();//int EventThread 

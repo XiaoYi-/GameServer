@@ -75,7 +75,7 @@ void ConnectObj::OnReadPacket(){
 		packet->SetType(iType);
 		//packet->SetSession(this);
 		this->mCurrPos = this->mCurrPos - iTotalLen;
-		//this->mGameServer->OnRecievePacket(packet);
+		//this->mServer->OnRecievePacket(packet);
 		this->mPacketBuff.push_back(packet);
 	}
 }

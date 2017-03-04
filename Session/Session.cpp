@@ -50,11 +50,11 @@ bool Session::Decode(int& iType,int& iStartPos,int& iLen){
 	return true;
 }
 
-void Session::Init(GameServer* server,struct bufferevent * buffev,evutil_socket_t fd,struct sockaddr *sa,char* sIp,int iPort){
+void Session::Init(Server* server,struct bufferevent * buffev,evutil_socket_t fd,struct sockaddr *sa,char* sIp,int iPort){
 this->mBuffev = buffev;
 this->mFd = fd;
 this->mSa = sa;
-this->mGameServer = server;
+this->mServer = server;
 this->mStreamBuff = (unsigned char*)malloc(MAX_PACKET_LEN);
 this->mIp = sIp;
 this->mPort = iPort;
@@ -103,7 +103,7 @@ void Session::OnStreamRecieve(struct bufferevent *buffev, void *arg){
 		packet->SetType(iType);
 		packet->SetSession(this);
 		this->mCurrPos = this->mCurrPos - iTotalLen;
-		this->mGameServer->OnRecievePacket(packet);
+		this->mServer->OnRecievePacket(packet);
 		break;
 	}
 }

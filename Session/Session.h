@@ -2,7 +2,7 @@
 #define SESSION_H
 
 #define MAX_PACKET_LEN 2048
-#include "../GameServer/GameServer.h"
+#include "../Server/server.h"
 #include "../Packet/Packet.h"
 //#include "../Thread/EventThread.h"
 #include <event2/bufferevent.h>
@@ -10,7 +10,7 @@
 
 #include <stdlib.h>
 
-class GameServer;
+class Server;
 class Packet;
 
 class Session{
@@ -22,10 +22,10 @@ public:
 	void OnStreamRecieve(struct bufferevent *b, void *arg);
 	void SendPacket(Packet*);
 
-	void Init(GameServer* server,struct bufferevent *,evutil_socket_t fd,struct sockaddr *sa,char* sIp,int iPort);
+	void Init(Server* server,struct bufferevent *,evutil_socket_t fd,struct sockaddr *sa,char* sIp,int iPort);
 	//EventThread* mEventThread;
 	struct bufferevent* mBuffev;
-	GameServer* mGameServer;
+	Server* mServer;
 private:
 //Decode* mDecode;
 int mCurrPos;

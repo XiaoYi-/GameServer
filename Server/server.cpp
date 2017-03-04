@@ -1,13 +1,13 @@
-#include "GameServer.h"
+#include "server.h"
 
-char GameServer::StrBuff[MAX_STR];
+char Server::StrBuff[MAX_STR];
 
-GameServer::GameServer(){}
+Server::Server(){}
 
-GameServer::~GameServer(){}
+Server::~Server(){}
 
 static void ProcPro(void* att){ // deal with pro
-	GameServer* server = (GameServer*)att;
+	Server* server = (Server*)att;
 	server->ExePacket();
 }
 
@@ -24,7 +24,7 @@ static void ProSave(void* att){
 }
 
 static void* MainLoopProc(void* att){ // main loop
-	//GameServer* server = (GameServer*)att;
+	//Server* server = (Server*)att;
 
 	while(true){
 		ProcPro(att);
@@ -35,8 +35,8 @@ static void* MainLoopProc(void* att){ // main loop
 }
 
 /*改成多个工作线程从任务池中拿出消息处理，不知道python状态机那边支不支持。*/
-void GameServer::ExePacket(){
-	//printf("%s\n", "1 GameServer::ExePacket");
+void Server::ExePacket(){
+	//printf("%s\n", "1 Server::ExePacket");
 	{
 		MutexLock mutexlock(_frontMutexLock);
 
@@ -63,7 +63,7 @@ void GameServer::ExePacket(){
 		//pthread_mutex_unlock(&this->mPacket_front_mutex_lock);
 	}
 
-	//printf("%s\n", "3 GameServer::ExePacket");
+	//printf("%s\n", "3 Server::ExePacket");
 	if(this->mCurrExePacket == NULL){
 		return;
 	}
@@ -71,29 +71,29 @@ void GameServer::ExePacket(){
 		printf("%s\n", "not this->pFuncObj");
 		return;
 	}
-	printf("%s\n", "2 GameServer::ExePacket");
+	printf("%s\n", "2 Server::ExePacket");
 	//int resultInt=0;
 	int iType = this->mCurrExePacket->GetType();
 	PyObject* pArgc = Py_BuildValue("(i)",iType);
 	PyObject* result = PyEval_CallObject(this->pFuncObj, pArgc); //call script fun
 }
 
-void GameServer::OnRecievePacket(Packet* p){
+void Server::OnRecievePacket(Packet* p){
 	//pthread_mutex_lock(&this->mPacket_back_mutex_lock);
 	MutexLock mutexlock(_backMutexLock);
 	this->mPacket_back.push_back(p);
-	//printf("%s\n", "GameServer::OnRecievePacket");
+	//printf("%s\n", "Server::OnRecievePacket");
 	//pthread_mutex_unlock(&this->mPacket_back_mutex_lock);
 }
 
-Packet* GameServer::GetNextPacket(){
+Packet* Server::GetNextPacket(){
 	return NULL;
 }
 
-/*bool GameServer::InitNet(){
+/*bool Server::InitNet(){
 	
 }*/
-bool GameServer::StartServer(){
+bool Server::StartServer(){
 	// init decode memery mamager
 
 	//InitNet(this);
@@ -121,61 +121,61 @@ bool GameServer::StartServer(){
 //	Packet* mCurrSendPacket;
 //	Packet* mCurrExePacket;
 
-void GameServer::PreparePacket(int iType){
-	printf("%s %d\n", "GameServer::PreparePacket",iType);
+void Server::PreparePacket(int iType){
+	printf("%s %d\n", "Server::PreparePacket",iType);
 	if(this->mCurrSendPacket){
 		//delete this->mCurrSendPacket;
 		this->mCurrSendPacket = NULL;
 	}
 	this->mCurrSendPacket = new Packet();
 	this->mCurrSendPacket->AddHead(iType);
-	Session* sesseion = DispatchThread::GetFirstSession();
+	Session* sesseion = listenThread::GetFirstSession();
 	if(not sesseion){
 		printf("%s\n", "if(not sesseion)");
 		return;
 	}
 	this->mCurrSendPacket->SetSession(sesseion);
 }
-void GameServer::PacketInt(int i){
+void Server::PacketInt(int i){
 	this->mCurrSendPacket->PushInt(i);
 }
-void GameServer::PacketDouble(double d){
+void Server::PacketDouble(double d){
 	float f = (float)d;
 	this->mCurrSendPacket->PushFloat(f);
 }
-void GameServer::PacketStr(char* str){
-	printf("%s\n", "GameServer::PacketStr");
+void Server::PacketStr(char* str){
+	printf("%s\n", "Server::PacketStr");
 	this->mCurrSendPacket->PushString(str);
 }
-int GameServer::UnpackInt(){
+int Server::UnpackInt(){
 	int i = 0;
 	this->mCurrExePacket->ReadInt(i);
-	printf("%s %d\n", "GameServer::UnpackInt",i);
+	printf("%s %d\n", "Server::UnpackInt",i);
 	return i;
 }
-double GameServer::UnpacketDouble(){
+double Server::UnpacketDouble(){
 	float f = 0;
 	this->mCurrExePacket->ReadFloat(f);
 	return f;
 }
-char* GameServer::UnpacketStr(){
+char* Server::UnpacketStr(){
 	this->StrBuff;
 	this->mCurrExePacket->ReadString((char*)this->StrBuff);
-	printf("GameServer::UnpacketStr %s\n", this->StrBuff);
+	printf("Server::UnpacketStr %s\n", this->StrBuff);
 	return (char*)this->StrBuff;
 }
-void GameServer::SendPacket(){
-	printf("%s\n", "GameServer::SendPacket");
+void Server::SendPacket(){
+	printf("%s\n", "Server::SendPacket");
 	this->mCurrSendPacket->AddTail();
 	Session* session = this->mCurrSendPacket->GetSession();
 	session->SendPacket(this->mCurrSendPacket);
 	//this->mCurrSendPacket = NULL;
 }
-Object* GameServer::FindObjById(double id){
+Object* Server::FindObjById(double id){
 	return ObjectHolder::FindObjById((int)id);
 }
 
-Player* GameServer::CreatePlayer(int id){
+Player* Server::CreatePlayer(int id){
 	Player* p = new Player();
 	p->SetId(id);
 	ObjectHolder::InsertObj(p,id);

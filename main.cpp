@@ -1,10 +1,10 @@
 
-#include "./Thread/DispatchThread.h"
+#include "./Thread/listenThread.h"
 #include "./Packet/Packet.h"
 
 int main(int argc,char** argv){
 
-	GameServer server;
+	Server server;
 	server.StartServer();
 
 	return 0;

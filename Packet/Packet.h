@@ -1,14 +1,14 @@
 #ifndef PACKET_H
 #define PACKET_H
 
-#include "../GameServer/GameServer.h"
+#include "../Server/server.h"
 #include "../Session/Session.h"
 
 #include<string>
 #include<cstring>
 #include<stdio.h>
 
-//class GameServer;
+//class Server;
 class Session;
 
 class Packet{
