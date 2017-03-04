@@ -37,26 +37,32 @@ static void* MainLoopProc(void* att){ // main loop
 /*改成多个工作线程从任务池中拿出消息处理，不知道python状态机那边支不支持。*/
 void GameServer::ExePacket(){
 	//printf("%s\n", "1 GameServer::ExePacket");
-	pthread_mutex_lock(&this->mPacket_front_mutex_lock);
-	//delete this->mCurrExePacket;
-	this->mCurrExePacket = NULL;
-	if(this->mPacket_front.empty()){
-		if(not this->mPacket_back.empty()){
-			for(std::vector<Packet*>::iterator iter = this->mPacket_back.begin();iter!=this->mPacket_back.end();)
-			{
-				printf("%s\n", "mPacket_front.push_back");
-				this->mPacket_front.push_back(*iter);
-				iter = this->mPacket_back.erase(iter);
+	{
+		MutexLock mutexlock(_frontMutexLock);
+
+		this->mCurrExePacket = NULL;
+		if(this->mPacket_front.empty()){
+
+			MutexLock mutexlock(_backMutexLock);
+
+			if(not this->mPacket_back.empty()){
+				std::vector<Packet*>::iterator iter = this->mPacket_back.begin();
+				for(iter;iter!=this->mPacket_back.end();)
+				{
+					printf("%s\n", "mPacket_front.push_back");
+					this->mPacket_front.push_back(*iter);
+					iter = this->mPacket_back.erase(iter);
+				}
 			}
 		}
+		std::vector<Packet*>::iterator item = this->mPacket_front.begin();
+		if(item != this->mPacket_front.end()){
+			this->mPacket_front.erase(item);
+			this->mCurrExePacket = *item;
+		}
+		//pthread_mutex_unlock(&this->mPacket_front_mutex_lock);
 	}
 
-	std::vector<Packet*>::iterator item = this->mPacket_front.begin();
-	if(item != this->mPacket_front.end()){
-		this->mPacket_front.erase(item);
-		this->mCurrExePacket = *item;
-	}
-	pthread_mutex_unlock(&this->mPacket_front_mutex_lock);
 	//printf("%s\n", "3 GameServer::ExePacket");
 	if(this->mCurrExePacket == NULL){
 		return;
@@ -73,10 +79,11 @@ void GameServer::ExePacket(){
 }
 
 void GameServer::OnRecievePacket(Packet* p){
-	pthread_mutex_lock(&this->mPacket_back_mutex_lock);
+	//pthread_mutex_lock(&this->mPacket_back_mutex_lock);
+	MutexLock mutexlock(_backMutexLock);
 	this->mPacket_back.push_back(p);
-	printf("%s\n", "GameServer::OnRecievePacket");
-	pthread_mutex_unlock(&this->mPacket_back_mutex_lock);
+	//printf("%s\n", "GameServer::OnRecievePacket");
+	//pthread_mutex_unlock(&this->mPacket_back_mutex_lock);
 }
 
 Packet* GameServer::GetNextPacket(){
@@ -91,8 +98,8 @@ bool GameServer::StartServer(){
 
 	//InitNet(this);
 
-	pthread_mutex_init(&this->mPacket_front_mutex_lock,NULL);
-	pthread_mutex_init(&this->mPacket_back_mutex_lock,NULL);
+	//pthread_mutex_init(&this->mPacket_front_mutex_lock,NULL);
+	//pthread_mutex_init(&this->mPacket_back_mutex_lock,NULL);
 
 	this->mEventThread = new EventThread();
 	//pthread_t pid;

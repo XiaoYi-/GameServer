@@ -4,8 +4,8 @@
 
 int main(int argc,char** argv){
 
-	GameServer* server = new GameServer();
-	server->StartServer();
+	GameServer server;
+	server.StartServer();
 
 	return 0;
 }

@@ -8,6 +8,7 @@
 #include "../Thread/EventThread.h"
 #include "../EnginScript/ScriptObj.h"
 #include "../EnginScript/EnginScript.h"
+#include "../Thread/mutex.h"
 
 #include <pthread.h>
 #include <Python.h>
@@ -53,18 +54,6 @@ public:
 	void SetFunc(PyObject *p){this->pFuncObj=p;}
 
 
-	/*
-	virtual void PreparePacket(int);
-	virtual void PacketInt(int);
-	virtual void PacketDouble(double);
-	virtual void PacketStr(char*);
-	virtual int UnpackInt();
-	virtual double UnpacketDouble();
-	virtual char* UnpacketStr();
-	virtual void SendPacket();
-	virtual Object* FindObjById(double id);
-	*/
-
 	Packet* mCurrSendPacket;
 	Packet* mCurrExePacket;
 	static char StrBuff[MAX_STR];
@@ -74,8 +63,10 @@ private:
 	std::vector<Packet*> mPacket_front;
 	std::vector<Packet*> mPacket_back;
 
-	pthread_mutex_t mPacket_front_mutex_lock;
-	pthread_mutex_t mPacket_back_mutex_lock;
+	//pthread_mutex_t mPacket_front_mutex_lock;
+	//pthread_mutex_t mPacket_back_mutex_lock;
+	Mutex _frontMutexLock;
+	Mutex _backMutexLock;
 };
 
 static Session* FindSessionById(int rid){
