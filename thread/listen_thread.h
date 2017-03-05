@@ -57,9 +57,10 @@ class EventThread;
 class listenThread:public Thread
 {
 public:
-	listenThread(Server* server,event_base*,int iPort);
+	listenThread(Server* server);
 	~listenThread();
-	void Init();
+	bool Init();
+	bool start_listener(int iPort);
 	void Connection_notify(const EventThread* evThread,struct evconnlistener *listener, evutil_socket_t fd,struct sockaddr *sa);
 	virtual void Run();
 	virtual void Exit();
@@ -76,7 +77,7 @@ public:
 private:
 	Server* mServer;
 	event_base* mevbase;
-	int mPort;
+	//std::vector<int> mPortList;
 
 	static std::map<int,Session*> mSessionMap;
 };
@@ -105,16 +106,10 @@ timeout_cb(evutil_socket_t fd, short event, void *arg)
 }
 
 static bool InitNet(){//Server* server
-	//listenThread::mEventThread ;
-	//server->mEventThread = NULL;
-	//server->SetEventThread(eventThread);
-	pthread_t pid;
-	//int ret=pthread_create(&pid,NULL,Proc,(void*)listenThread::mEventThread );
-	//return eventThread;
 }
 
-static bool StartListener(Server* server,int iPort){
-	printf("-----StartListener-----\n");
+/*static bool start_listener(Server* server,int iPort){
+	printf("-----start_listener-----\n");
 	struct sockaddr_in sin;
 	struct event_base* evbase;
 	struct evconnlistener* evlistener;
@@ -132,10 +127,10 @@ static bool StartListener(Server* server,int iPort){
 		return false;
 	}
 
-/*	event_assign(&timeout, evbase, -1, EV_PERSIST, timeout_cb, (void*)&timeout);
+	event_assign(&timeout, evbase, -1, EV_PERSIST, timeout_cb, (void*)&timeout);
 	evutil_timerclear(&tv);
 	tv.tv_sec = 2;
-	event_add(&timeout, &tv);*/
+	event_add(&timeout, &tv);
 
 	listenThread* dispath = new listenThread(server,evbase,iPort);
 
@@ -154,10 +149,9 @@ static bool StartListener(Server* server,int iPort){
 	pthread_t pid;
 	int ret=pthread_create(&pid,NULL,Proc,(void*)dispath);
 	return true;
-}
+}*/
 
 static void connection_notify(struct evconnlistener *listener, evutil_socket_t fd,struct sockaddr *sa, int socklen, void *user_data){
-	printf("----------connection_notify----------\n");
 	listenThread* dispath = (listenThread*)(user_data);
 	dispath->Connection_notify(NULL,listener,fd,sa);
 }

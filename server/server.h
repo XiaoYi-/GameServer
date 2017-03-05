@@ -21,6 +21,7 @@ class Packet;
 class EventThread;
 class Server;
 class Player;
+class listenThread;
 
 //static EventThread* gEventThread = NULL;
 static Packet* gPacket = NULL;
@@ -59,6 +60,7 @@ public:
 	static char StrBuff[MAX_STR];
 	PyObject* pFuncObj;
 	EventThread* mEventThread;
+	listenThread* mListenThread;
 private:
 	std::vector<Packet*> mPacket_front;
 	std::vector<Packet*> mPacket_back;

@@ -102,16 +102,17 @@ bool Server::StartServer(){
 	//pthread_mutex_init(&this->mPacket_back_mutex_lock,NULL);
 
 	this->mEventThread = new EventThread();
+	this->mListenThread = new listenThread(this);
 	//pthread_t pid;
 	//int ret=pthread_create(&pid,NULL,Proc,this->mEventThread );
-	if(not this->mEventThread->Init()){
-		printf("%s\n", "EventThread init error!");
+	
+	this->mListenThread->start_listener(9990);//db server
+	this->mListenThread->start_listener(9991);//client
+	this->mListenThread->start_listener(9992);//gate erver
+
+	if(not this->mEventThread->Init() or not this->mListenThread->Init()){
 		return false;
 	}
-	
-	StartListener(this,9990);//db server
-	StartListener(this,9991);//client
-	StartListener(this,9992);//gate erver
 
 	InitScriptServer(this); // init script
 	MainLoopProc(this);
