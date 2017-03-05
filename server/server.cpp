@@ -40,25 +40,26 @@ void Server::ExePacket(){
 	{
 		MutexLock mutexlock(_frontMutexLock);
 
+		Packet* iter = NULL;
 		this->mCurrExePacket = NULL;
 		if(this->mPacket_front.empty()){
 
 			MutexLock mutexlock(_backMutexLock);
 
 			if(not this->mPacket_back.empty()){
-				std::vector<Packet*>::iterator iter = this->mPacket_back.begin();
-				for(iter;iter!=this->mPacket_back.end();)
+				while(not this->mPacket_back.empty())
 				{
 					printf("%s\n", "mPacket_front.push_back");
-					this->mPacket_front.push_back(*iter);
-					iter = this->mPacket_back.erase(iter);
+					this->mPacket_front.push(iter);
+					this->mPacket_back.pop();
 				}
 			}
 		}
-		std::vector<Packet*>::iterator item = this->mPacket_front.begin();
-		if(item != this->mPacket_front.end()){
-			this->mPacket_front.erase(item);
-			this->mCurrExePacket = *item;
+		
+		if(not this->mPacket_front.empty()){
+			iter = this->mPacket_front.front();
+			this->mPacket_front.pop();
+			this->mCurrExePacket = iter;
 		}
 		//pthread_mutex_unlock(&this->mPacket_front_mutex_lock);
 	}
@@ -81,7 +82,7 @@ void Server::ExePacket(){
 void Server::OnRecievePacket(Packet* p){
 	//pthread_mutex_lock(&this->mPacket_back_mutex_lock);
 	MutexLock mutexlock(_backMutexLock);
-	this->mPacket_back.push_back(p);
+	this->mPacket_back.push(p);
 	//printf("%s\n", "Server::OnRecievePacket");
 	//pthread_mutex_unlock(&this->mPacket_back_mutex_lock);
 }

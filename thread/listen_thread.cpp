@@ -13,22 +13,17 @@ listenThread::~listenThread(){
 
 bool listenThread::start_listener(int iPort){
 	struct sockaddr_in sin;
-	//struct event_base* evbase = this->mevbase;
 	struct evconnlistener* evlistener;
-	//struct event timeout ;
-	//struct timeval tv;
 
 	memset(&sin,0,sizeof(sin));
 	sin.sin_family = AF_INET;
 	sin.sin_port = htons(iPort);
 	sin.sin_addr.s_addr = htonl(INADDR_ANY);
-	//evbase = event_base_new();
 
 	evlistener = evconnlistener_new_bind(mevbase,connection_notify,this,LEV_OPT_REUSEABLE|LEV_OPT_CLOSE_ON_FREE,
 		-1,(struct sockaddr*)&sin,sizeof(sin));
 
 	if(!evlistener){
-		//printf("%s\n", "listener error");
 		return false;
 	}
 	return true;

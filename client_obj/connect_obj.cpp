@@ -10,37 +10,37 @@ void ConnectObj::Init(struct bufferevent* bev){
 }
 
 bool ConnectObj::Decode(int& iType,int& iStartPos,int& iLen){
-	int iHeadFlat = 0x0001;
-	int iEndFlat  = 0x0002;
+	int iHeadFlat = 0x0101;
+	int iEndFlat  = 0x0202;
 	int iTemp = 0;
 	int iPos=0;
 	if(this->mCurrPos-iPos<4)
 		return false;
 	//memcpy(&iTemp,this->mStreamBuff+iPos,sizeof(int));
 	iTemp = Packet::ReadInt(this->mStreamBuff+iPos);
-	printf("1 Session::Decode %d %d\n", iTemp,iHeadFlat);
+	//printf("1 Session::Decode %d %d\n", iTemp,iHeadFlat);
 	if (iTemp == iHeadFlat){
 		iPos += sizeof(int);
 		iTemp = Packet::ReadInt(this->mStreamBuff+iPos);
 		//memcpy(&iTemp,this->mStreamBuff+iPos,sizeof(int));
 		iType = iTemp;
-		printf("iType=%d\n", iType);
+		//printf("iType=%d\n", iType);
 		iPos += sizeof(int);
 		//memcpy(&iTemp,this->mStreamBuff+iPos,sizeof(int));
 		iTemp = Packet::ReadInt(this->mStreamBuff+iPos);
 		iPos += sizeof(int);
 		iLen = iTemp;
-		printf("iLen=%d\n", iLen);
+		//printf("iLen=%d\n", iLen);
 		iStartPos = iPos;
 		if (this->mCurrPos-iPos < iLen+sizeof(int)){
-			printf("%s\n", "this->mCurrPos-iPos < iLen+sizeof(int)");
+			//printf("%s\n", "this->mCurrPos-iPos < iLen+sizeof(int)");
 			return false;
 		}
 		iTemp = Packet::ReadInt(this->mStreamBuff+iPos+iLen);
 		//memcpy(&iTemp,this->mStreamBuff+iStartPos+iLen,sizeof(int));
-		printf("iEndFlat %d\n", iTemp);
+		//printf("iEndFlat %d\n", iTemp);
 		if (iTemp != iEndFlat){
-			printf("%s\n", "iTemp != iEndFlat");
+			//printf("%s\n", "iTemp != iEndFlat");
 			return false;
 		}
 	}else{
@@ -76,7 +76,7 @@ void ConnectObj::OnReadPacket(){
 		//packet->SetSession(this);
 		this->mCurrPos = this->mCurrPos - iTotalLen;
 		//this->mServer->OnRecievePacket(packet);
-		this->mPacketBuff.push_back(packet);
+		this->mPacketBuff.push(packet);
 	}
 }
 
@@ -85,9 +85,9 @@ void ConnectObj::ExePacket(){
 		return;
 	}
 	printf("%s\n", "ConnectObj::ExePacket");
-	std::vector<Packet*>::iterator iter = this->mPacketBuff.begin();
+	std::queue<Packet*>::iterator iter = this->mPacketBuff.front();
 	Packet* packet = *iter;
-	this->mPacketBuff.erase(iter);
+	this->mPacketBuff.pop();
 	char* str = (char*) malloc(100);
 	//packet->ReadString(str);
 	//printf("ConnectObj::ExePacket %s\n", str);

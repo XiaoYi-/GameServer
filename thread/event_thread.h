@@ -8,7 +8,7 @@
 #include "../packet/packet.h"
 #include <event2/event.h>
 
-#include <vector>
+#include <queue>
 #include <unistd.h>
 
 class Session;
@@ -27,8 +27,8 @@ public:
 	event_base* mevbase;
 
 private:
-	std::vector<Packet*> mPacketBack;
-	std::vector<Packet*> mPacketFront;
+	std::queue<Packet*> mPacketBack;
+	std::queue<Packet*> mPacketFront;
 };
 
 #endif

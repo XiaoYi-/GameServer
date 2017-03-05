@@ -6,18 +6,19 @@ CyclePool::CyclePool(int iMaxCount,int iMaxSize):mMaxItemCount(iMaxCount),mMaxIt
 }
 
 CyclePool::~CyclePool(){
-	std::vector<ItemBuff*>::iterator iter = this->mItemBuffFront.begin();
-	for(iter;iter!=this->mItemBuffFront.end();){
-		free(*iter->buff);
+	//std::vector<ItemBuff*>::iterator iter = this->mItemBuffFront.begin();
+	while(not this->mItemBuffFront.empty()){
+		ItemBuff* t = this-<mItemBuffFront.front();
+		free(t->buff);
 		//free(*iter);
-		iter = this->mItemBuffFront.erase(iter)
+		this->mItemBuffFront.pop();
 	}
 
-	std::vector<ItemBuff*>::iterator iter = this->mItemBuffBack.begin();
-	for(iter;iter!=this->mItemBuffBack.end();){
-		free(*iter->buff);
-		//free(*iter);
-		iter = this->mItemBuffBack.erase(iter)
+	//std::vector<ItemBuff*>::iterator iter = this->mItemBuffBack.begin();
+	while(not this->mItemBuffBack.empty()){
+		ItemBuff* t = this->mItemBuffBack.front();
+		free(t->buff);
+		this->mItemBuffBack.pop();
 	}
 
 	//pthread_mutex_free(mItemFrontMutexLock);
@@ -36,7 +37,7 @@ ItemBuff* CyclePool::CreateItem(unsigned int iSize){
 }
 ItemBuff* CyclePool::pop(unsigned int iSize){
 	ItemBuff* item = NULL;
-	std::vector<ItemBuff*>::iterator iter ;
+	ItemBuff* iter = NULL ;
 	if(iSize > this->mMaxItemSize){
 		item = this->CreateItem(iSize);
 		return item;
@@ -52,21 +53,22 @@ ItemBuff* CyclePool::pop(unsigned int iSize){
 					for(int i=0;i<10;i++){
 						ItemBuff* newItem = this->CreateItem(iSize);
 						if(newItem!=NULL){
-							this->mItemBuffBack.push_back(newItem);
+							this->mItemBuffBack.push(newItem);
 						}
 					}
 				}
-				iter = this->mItemBuffBack.begin();
-				for(iter;iter!=this->mItemBuffBack.end();)
+				//iter = this->mItemBuffBack.front();
+				for(not this->mItemBuffBack.empty())
 				{
-					this->mItemBuffFront.push_back(*iter);
-					iter = this->mItemBuffBack.erase(iter);	
+					iter = this->mItemBuffBack.front();
+					this->mItemBuffFront.push(iter);
+					this->mItemBuffBack.pop();	
 				}
 				//pthread_mutex_unlock(&this->mItemBackMutexLock);
 			}
 			if(not this->mItemBuffFront.empty()){
-				iter = this->mItemBuffFront.pop();
-				item = iter;
+				item = this->mItemBuffFront.pop();
+				//item = iter;
 			}
 			//pthread_mutex_unlock(&this->mItemFrontMutexLock);
 		}
@@ -78,12 +80,9 @@ ItemBuff* CyclePool::pop(unsigned int iSize){
 void CyclePool::put(ItemBuff* item){
 	//pthread_mutex_unlock(&this->mItemBackMutexLock);
 	MutexLock backMutex(_backMutex);
-	this->mItemBuffBack.push_back(item);
+	this->mItemBuffBack.push(item);
 	//pthread_mutex_unlock(&this->mItemBackMutexLock);
 }
-
-//std::vector<ItemBuff*> mItemBuffFront;
-//std::vector<ItemBuff*> mItemBuffBack;
 
 //pthread_mutex_t mItemFrontMutexLock;
 //pthread_mutex_t mItemBackMutexLock;

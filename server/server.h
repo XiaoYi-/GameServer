@@ -12,7 +12,7 @@
 
 #include <pthread.h>
 #include <Python.h>
-#include <vector>
+#include <queue>
 #include <map>
 
 #define MAX_STR  1024
@@ -62,8 +62,8 @@ public:
 	EventThread* mEventThread;
 	listenThread* mListenThread;
 private:
-	std::vector<Packet*> mPacket_front;
-	std::vector<Packet*> mPacket_back;
+	std::queue<Packet*> mPacket_front;
+	std::queue<Packet*> mPacket_back;
 
 	//pthread_mutex_t mPacket_front_mutex_lock;
 	//pthread_mutex_t mPacket_back_mutex_lock;

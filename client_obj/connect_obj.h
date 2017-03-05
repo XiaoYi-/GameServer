@@ -6,7 +6,7 @@
 #include <event2/buffer.h>
 #include "../packet/Packet.h"
 
-#include <vector>
+#include <queue>
 
 class ConnectObj{
 public:
@@ -24,7 +24,7 @@ private:
 	int mMaxLen;
 	unsigned char* mStreamBuff;
 	
-	std::vector<Packet*> mPacketBuff;
+	std::queue<Packet*> mPacketBuff;
 };
 
 #endif

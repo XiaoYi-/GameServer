@@ -2,7 +2,7 @@
 #define CYCLE_POOL_H
 
 #include "../thread/mutex.h"
-#include <vector>
+#include <queue>
 //#include <pthread.h>
 
 typedef struct {
@@ -22,8 +22,8 @@ public:
 private:
 	int mMaxItemCount;
 	int mMaxItemSize;
-	std::vector<ItemBuff*> mItemBuffFront;
-	std::vector<ItemBuff*> mItemBuffBack;
+	std::queue<ItemBuff*> mItemBuffFront;
+	std::queue<ItemBuff*> mItemBuffBack;
 
 	//pthread_mutex_t mItemFrontMutexLock;
 	//pthread_mutex_t mItemBackMutexLock;
