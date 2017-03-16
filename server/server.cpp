@@ -72,7 +72,7 @@ void Server::ExePacket(){
 		printf("%s\n", "not this->pFuncObj");
 		return;
 	}
-	printf("%s\n", "2 Server::ExePacket");
+	//printf("%s\n", "2 Server::ExePacket");
 	//int resultInt=0;
 	int iType = this->mCurrExePacket->GetType();
 	PyObject* pArgc = Py_BuildValue("(i)",iType);

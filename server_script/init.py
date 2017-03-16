@@ -28,8 +28,11 @@ def ExeFunc(*t):
 	return func(t[0])
 
 if __name__ == "__main__":
-	print "------"
-	pass
+	sData = "{1:10}"
+	dData = json.loads(sData)
+
+	dData = {}
+	dData["kk"] = 100
 
 
 
