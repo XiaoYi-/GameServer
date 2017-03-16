@@ -24,8 +24,6 @@ static void ProSave(void* att){
 }
 
 static void* MainLoopProc(void* att){ // main loop
-	//Server* server = (Server*)att;
-
 	while(true){
 		ProcPro(att);
 		ProCallBack(att);
@@ -36,7 +34,6 @@ static void* MainLoopProc(void* att){ // main loop
 
 /*改成多个工作线程从任务池中拿出消息处理，不知道python状态机那边支不支持。*/
 void Server::ExePacket(){
-	//printf("%s\n", "1 Server::ExePacket");
 	{
 		MutexLock mutexlock(_frontMutexLock);
 
@@ -61,10 +58,8 @@ void Server::ExePacket(){
 			this->mPacket_front.pop();
 			this->mCurrExePacket = iter;
 		}
-		//pthread_mutex_unlock(&this->mPacket_front_mutex_lock);
 	}
 
-	//printf("%s\n", "3 Server::ExePacket");
 	if(this->mCurrExePacket == NULL){
 		return;
 	}
@@ -72,19 +67,14 @@ void Server::ExePacket(){
 		printf("%s\n", "not this->pFuncObj");
 		return;
 	}
-	//printf("%s\n", "2 Server::ExePacket");
-	//int resultInt=0;
 	int iType = this->mCurrExePacket->GetType();
 	PyObject* pArgc = Py_BuildValue("(i)",iType);
 	PyObject* result = PyEval_CallObject(this->pFuncObj, pArgc); //call script fun
 }
 
 void Server::OnRecievePacket(Packet* p){
-	//pthread_mutex_lock(&this->mPacket_back_mutex_lock);
 	MutexLock mutexlock(_backMutexLock);
 	this->mPacket_back.push(p);
-	//printf("%s\n", "Server::OnRecievePacket");
-	//pthread_mutex_unlock(&this->mPacket_back_mutex_lock);
 }
 
 Packet* Server::GetNextPacket(){
